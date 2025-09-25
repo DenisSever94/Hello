@@ -2,40 +2,27 @@ pipeline {
     agent any
 
     environment {
-        MVN_HOME = tool name: 'Maven 3.9.1', type: 'maven' // замени на установленный Maven в Jenkins
+        MVN_HOME = tool name: 'Maven 3.9.1', type: 'maven' // замени на свой Maven
     }
 
     stages {
         stage('Checkout') {
             steps {
                 sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
-                    sh 'rm -rf Hello || true' // чистим старый workspace
+                    // очищаем предыдущий workspace, если есть
+                    sh 'rm -rf Hello || true'
+                    // клонируем репо прямо через SSH
                     sh 'git clone -b main git@github.com:DenisSever94/Hello.git'
-                    dir('Hello') {
-                        sh 'git status' // проверяем, что мы внутри репо
-                    }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Build & Test') {
             steps {
                 dir('Hello') {
-                    sh "${MVN_HOME}/bin/mvn clean install"
+                    sh "${MVN_HOME}/bin/mvn clean install test"
                 }
             }
-        }
-
-        stage('Test') {
-            steps {
-                dir('Hello') {
-                    sh "${MVN_HOME}/bin/mvn test"
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps { echo 'Deploy stage skipped' }
         }
     }
 
