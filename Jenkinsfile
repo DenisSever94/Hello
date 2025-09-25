@@ -22,9 +22,10 @@ pipeline {
             steps { sh 'mvn test' }
         }
 
-        stage('Deploy') {
-            steps { /* sh './deploy.sh' */ }
-        }
+       stage('Deploy') {
+    steps {
+        echo 'Deploy stage skipped'
+       }
     }
 
     post {
