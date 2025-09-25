@@ -1,10 +1,10 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven 3.9.3' // имя Maven из Manage Jenkins -> Global Tool Configuration
-        jdk 'JDK17'          // имя JDK из Manage Jenkins -> Global Tool Configuration
-    }
+    // tools {
+    //     maven 'Maven 3.9.3' // имя Maven из Manage Jenkins -> Global Tool Configuration
+    //     jdk 'JDK17'          // имя JDK из Manage Jenkins -> Global Tool Configuration
+    // }
 
     stages {
         stage('Checkout') {
