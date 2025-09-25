@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     tools {
-        git 'Default'
-        jdk 'JDK17'
-        maven 'Maven3' // или имя Maven, как в твоей конфигурации
+        git 'Default'  // убедись, что Git установлен и указан как Default
+        maven 'Maven3'  // или имя твоей Maven установки в Jenkins
     }
 
     stages {
         stage('Checkout') {
             steps {
-                sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
+                // Запуск ssh-agent для использования credentials
+                sshagent(credentials: ['02131aea-794a-48e7-af64-51a05008ad20']) {
                     git branch: 'main',
                         url: 'git@github.com:DenisSever94/Hello.git'
                 }
