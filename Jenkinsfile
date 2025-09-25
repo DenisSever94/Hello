@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
- tools {
-    git 'Default'
-}
+    tools {
+        git 'Default'
+    }
 
     stages {
         stage('Checkout') {
@@ -15,21 +15,31 @@ pipeline {
         }
 
         stage('Build') {
-            steps { sh 'mvn clean install' }
+            steps { 
+                sh 'mvn clean install' 
+            }
         }
 
         stage('Test') {
-            steps { sh 'mvn test' }
+            steps { 
+                sh 'mvn test' 
+            }
         }
 
-       stage('Deploy') {
-    steps {
-        echo 'Deploy stage skipped'
-       }
+        stage('Deploy') {
+            steps {
+                echo 'Deploy stage skipped'
+                // sh './deploy.sh' // Раскомментируй, если есть скрипт деплоя
+            }
+        }
     }
 
     post {
-        success { echo 'Сборка успешно завершена!' }
-        failure { echo 'Сборка провалена!' }
+        success { 
+            echo 'Сборка успешно завершена!' 
+        }
+        failure { 
+            echo 'Сборка провалена!' 
+        }
     }
 }
