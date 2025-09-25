@@ -5,8 +5,8 @@ pipeline {
         stage('Checkout Repo') {
             steps {
                 sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
-                    // Клонируем репо прямо в workspace
                     sh '''
+                        echo "Клонируем репозиторий через SSH"
                         rm -rf Hello || true
                         git clone git@github.com:DenisSever94/Hello.git
                     '''
@@ -17,7 +17,6 @@ pipeline {
         stage('Build') {
             steps {
                 dir('Hello') {
-                    // Если у тебя Maven, можно заменить на Gradle или другой билд
                     sh 'mvn clean package'
                 }
             }
