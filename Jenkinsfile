@@ -1,41 +1,31 @@
 pipeline {
     agent any
 
-    environment {
-        REPO_URL = 'git@github.com:DenisSever94/Hello.git'
-        REPO_DIR = 'Hello'
-    }
-
     stages {
-        stage('Checkout Git via SSH') {
+        stage('Checkout Repo') {
             steps {
-                sshagent(['git']) {  // ID SSH credentials в Jenkins
-                    script {
-                        if (!fileExists(REPO_DIR)) {
-                            sh "git clone ${REPO_URL} ${REPO_DIR}"
-                        }
-                        dir(REPO_DIR) {
-                            sh '''
-                                git fetch --all
-                                git reset --hard origin/main
-                            '''
-                        }
-                    }
+                sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
+                    // Клонируем репо прямо в workspace
+                    sh '''
+                        rm -rf Hello || true
+                        git clone git@github.com:DenisSever94/Hello.git
+                    '''
                 }
             }
         }
 
         stage('Build') {
             steps {
-                dir(REPO_DIR) {
-                    sh 'mvn clean install'
+                dir('Hello') {
+                    // Если у тебя Maven, можно заменить на Gradle или другой билд
+                    sh 'mvn clean package'
                 }
             }
         }
 
         stage('Test') {
             steps {
-                dir(REPO_DIR) {
+                dir('Hello') {
                     sh 'mvn test'
                 }
             }
@@ -44,7 +34,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Сборка успешно завершена!'
+            echo '✅ Сборка прошла успешно!'
         }
         failure {
             echo '❌ Сборка провалилась!'
