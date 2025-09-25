@@ -1,10 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        SSH_CREDENTIALS = '02131aea-794a-48e7-af64-51a05008ad20' // твой глобальный ключ
+    }
+
     stages {
         stage('Checkout Repo') {
             steps {
-                sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
+                sshagent([env.SSH_CREDENTIALS]) {
                     sh '''
                         echo "Клонируем репозиторий через SSH"
                         rm -rf Hello || true
