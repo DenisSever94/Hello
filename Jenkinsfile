@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                // sh './deploy.sh'
+               echo 'Skipping deploy for now'
             }
         }
     }
