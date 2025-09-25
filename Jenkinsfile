@@ -22,11 +22,11 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Deploy') {
-            steps {
-                // Если у тебя нет скрипта deploy.sh, убери или закомментируй эту строку
-                // sh './deploy.sh'
-            }
+        // stage('Deploy') {
+        //     steps {
+        //         // Если у тебя нет скрипта deploy.sh, убери или закомментируй эту строку
+        //         // sh './deploy.sh'
+        //     }
         }
     }
 }
