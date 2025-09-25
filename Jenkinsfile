@@ -1,8 +1,9 @@
 pipeline {
-    agent any
-
-    tools {
-        maven 'Maven3'
+    agent {
+        docker {
+            image 'maven:3.9.3-eclipse-temurin-17' // Maven + JDK17
+            args '-v /root/.m2:/root/.m2' // кэш локального репозитория Maven (опционально)
+        }
     }
 
     stages {
@@ -23,6 +24,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                // Если у тебя нет скрипта deploy.sh, убери или закомментируй эту строку
                 sh './deploy.sh'
             }
         }
