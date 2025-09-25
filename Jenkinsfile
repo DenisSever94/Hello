@@ -2,32 +2,44 @@ pipeline {
     agent any
 
     environment {
-        MVN_HOME = tool name: 'Maven 3.9.1', type: 'maven' // замени на свой Maven
+        // Указываем путь к Maven, если не настроен глобально
+        MAVEN_HOME = tool name: 'Maven', type: 'maven'
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Git') {
             steps {
-                sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
-                    // очищаем предыдущий workspace, если есть
-                    sh 'rm -rf Hello || true'
-                    // клонируем репо прямо через SSH
-                    sh 'git clone -b main git@github.com:DenisSever94/Hello.git'
+                // Используем SSH ключ, который уже работает
+                sshagent(['git']) { // <-- ID credentials из Jenkins
+                    // Клонируем репозиторий, если папки нет, иначе обновляем
+                    sh '''
+                        if [ ! -d "Hello" ]; then
+                            git clone git@github.com:DenisSever94/Hello.git
+                        fi
+                        cd Hello
+                        git pull
+                    '''
                 }
             }
         }
 
-        stage('Build & Test') {
+        stage('Build with Maven') {
             steps {
-                dir('Hello') {
-                    sh "${MVN_HOME}/bin/mvn clean install test"
-                }
+                sh '''
+                    cd Hello
+                    mvn clean install
+                '''
             }
         }
     }
 
     post {
-        success { echo 'Сборка успешно завершена!' }
-        failure { echo 'Сборка провалена!' }
+        success {
+            echo 'Сборка успешно завершена!'
+        }
+        failure {
+            echo 'Сборка провалилась!'
+        }
     }
 }
