@@ -1,28 +1,28 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                
                 checkout scm
             }
         }
         stage('Build') {
             steps {
-                // Build your project
                 sh 'mvn clean install'
             }
         }
         stage('Test') {
             steps {
-                // Run tests
                 sh 'mvn test'
             }
         }
         stage('Deploy') {
             steps {
-                // Deploy the application
                 sh './deploy.sh'
             }
         }
