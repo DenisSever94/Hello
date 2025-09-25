@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        SSH_CREDENTIALS = '02131aea-794a-48e7-af64-51a05008ad20' // твой глобальный ключ
+        SSH_CREDENTIALS = '02131aea-794a-48e7-af64-51a05008ad20' // твой глобальный SSH ключ
+        IMAGE_NAME = 'hello-app'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -33,14 +35,36 @@ pipeline {
                 }
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('Hello') {
+                    sh """
+                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Сборка прошла успешно!'
+            echo '✅ Сборка, тесты и деплой Docker прошли успешно!'
         }
         failure {
-            echo '❌ Сборка провалилась!'
+            echo '❌ Что-то пошло не так на этапе сборки/теста/деплоя!'
         }
     }
 }
