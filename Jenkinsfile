@@ -2,15 +2,14 @@ pipeline {
     agent any
 
     tools {
-        // Указываем имена инструментов из Manage Jenkins → Global Tool Configuration
-        maven 'Maven3'
+        git 'Default'
         jdk 'JDK17'
+        maven 'Maven3' // или имя Maven, как в твоей конфигурации
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Используем ssh-agent, чтобы git мог использовать твой SSH-ключ
                 sshagent(['02131aea-794a-48e7-af64-51a05008ad20']) {
                     git branch: 'main',
                         url: 'git@github.com:DenisSever94/Hello.git'
@@ -19,30 +18,20 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                sh 'mvn clean install'
-            }
+            steps { sh 'mvn clean install' }
         }
 
         stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
+            steps { sh 'mvn test' }
         }
 
         stage('Deploy') {
-            steps {
-                echo 'Deploy stage skipped'
-            }
+            steps { echo 'Deploy stage skipped' }
         }
     }
 
     post {
-        success {
-            echo 'Сборка успешно завершена!'
-        }
-        failure {
-            echo 'Сборка провалена!'
-        }
+        success { echo 'Сборка успешно завершена!' }
+        failure { echo 'Сборка провалена!' }
     }
 }
