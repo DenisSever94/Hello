@@ -25,7 +25,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Если у тебя нет скрипта deploy.sh, убери или закомментируй эту строку
-                sh './deploy.sh'
+                // sh './deploy.sh'
             }
         }
     }
