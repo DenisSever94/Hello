@@ -1,30 +1,23 @@
 pipeline {
     agent any
 
-    environment {
-        // Указываем путь к Maven, если не настроен глобально
-        MAVEN_HOME = tool name: 'Maven', type: 'maven'
-        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
-    }
-
     stages {
-        stage('Checkout Git') {
+        stage('Checkout Git via SSH') {
             steps {
-                // Используем SSH ключ, который уже работает
-                sshagent(['git']) { // <-- ID credentials из Jenkins
-                    // Клонируем репозиторий, если папки нет, иначе обновляем
+                sshagent(['git']) {  // ID credentials из Jenkins
                     sh '''
                         if [ ! -d "Hello" ]; then
                             git clone git@github.com:DenisSever94/Hello.git
                         fi
                         cd Hello
-                        git pull
+                        git fetch --all
+                        git reset --hard origin/main
                     '''
                 }
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build') {
             steps {
                 sh '''
                     cd Hello
