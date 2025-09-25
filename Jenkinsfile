@@ -1,9 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.3-eclipse-temurin-17' // Maven + JDK17
-            args '-v /root/.m2:/root/.m2' // кэш локального репозитория Maven (опционально)
-        }
+    agent any
+
+    tools {
+        maven 'Maven 3.9.3' // если Maven установлен через Manage Jenkins -> Global Tool Configuration
+        jdk 'JDK17'          // если JDK установлен
     }
 
     stages {
@@ -22,11 +22,10 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        // stage('Deploy') {
-        //     steps {
-        //         // Если у тебя нет скрипта deploy.sh, убери или закомментируй эту строку
-        //         // sh './deploy.sh'
-        //     }
+        stage('Deploy') {
+            steps {
+                // sh './deploy.sh' // если есть deploy скрипт
+            }
         }
     }
 }
